@@ -1,0 +1,633 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.8 (Debian 12.8-1.pgdg110+1)
+-- Dumped by pg_dump version 12.8 (Debian 12.8-1.pgdg110+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: drugs; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA drugs;
+
+
+ALTER SCHEMA drugs OWNER TO postgres;
+
+--
+-- Name: users; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA users;
+
+
+ALTER SCHEMA users OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: Drug; Type: TABLE; Schema: drugs; Owner: postgres
+--
+
+CREATE TABLE drugs."Drug" (
+    "Id" bigint NOT NULL,
+    "Type" text,
+    "Name" text,
+    "Description" text,
+    "CasNumber" text,
+    "Unii" text,
+    "AverageMass" double precision,
+    "MonoisotopicMass" double precision,
+    "State" text,
+    "Toxicity" text,
+    "CreatedAt" timestamp without time zone DEFAULT now(),
+    "DrugBankId" text NOT NULL
+);
+
+
+ALTER TABLE drugs."Drug" OWNER TO postgres;
+
+--
+-- Name: DrugByDrugInteraction; Type: TABLE; Schema: drugs; Owner: postgres
+--
+
+CREATE TABLE drugs."DrugByDrugInteraction" (
+    "Id" bigint NOT NULL,
+    "FirstDrugId" bigint NOT NULL,
+    "SecondDrugId" bigint NOT NULL,
+    "Description" text
+);
+
+
+ALTER TABLE drugs."DrugByDrugInteraction" OWNER TO postgres;
+
+--
+-- Name: DrugByDrugInteraction_Id_seq; Type: SEQUENCE; Schema: drugs; Owner: postgres
+--
+
+CREATE SEQUENCE drugs."DrugByDrugInteraction_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE drugs."DrugByDrugInteraction_Id_seq" OWNER TO postgres;
+
+--
+-- Name: DrugByDrugInteraction_Id_seq; Type: SEQUENCE OWNED BY; Schema: drugs; Owner: postgres
+--
+
+ALTER SEQUENCE drugs."DrugByDrugInteraction_Id_seq" OWNED BY drugs."DrugByDrugInteraction"."Id";
+
+
+--
+-- Name: DrugProduct; Type: TABLE; Schema: drugs; Owner: postgres
+--
+
+CREATE TABLE drugs."DrugProduct" (
+    "Id" bigint NOT NULL,
+    "Description" text,
+    "Cost" double precision NOT NULL,
+    "Unit" text,
+    "Currency" text,
+    "DrugId" bigint NOT NULL
+);
+
+
+ALTER TABLE drugs."DrugProduct" OWNER TO postgres;
+
+--
+-- Name: DrugProduct_Id_seq; Type: SEQUENCE; Schema: drugs; Owner: postgres
+--
+
+CREATE SEQUENCE drugs."DrugProduct_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE drugs."DrugProduct_Id_seq" OWNER TO postgres;
+
+--
+-- Name: DrugProduct_Id_seq; Type: SEQUENCE OWNED BY; Schema: drugs; Owner: postgres
+--
+
+ALTER SEQUENCE drugs."DrugProduct_Id_seq" OWNED BY drugs."DrugProduct"."Id";
+
+
+--
+-- Name: Drug_Id_seq; Type: SEQUENCE; Schema: drugs; Owner: postgres
+--
+
+CREATE SEQUENCE drugs."Drug_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE drugs."Drug_Id_seq" OWNER TO postgres;
+
+--
+-- Name: Drug_Id_seq; Type: SEQUENCE OWNED BY; Schema: drugs; Owner: postgres
+--
+
+ALTER SEQUENCE drugs."Drug_Id_seq" OWNED BY drugs."Drug"."Id";
+
+
+--
+-- Name: Prescription; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Prescription" (
+    "Id" bigint NOT NULL,
+    "DoctorId" bigint NOT NULL,
+    "PatientId" bigint NOT NULL,
+    "CreatedAt" timestamp without time zone DEFAULT now() NOT NULL,
+    "RedeemedAt" timestamp without time zone,
+    "QrCodePath" text
+);
+
+
+ALTER TABLE public."Prescription" OWNER TO postgres;
+
+--
+-- Name: PrescriptionByDrugProduct; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."PrescriptionByDrugProduct" (
+    "Id" bigint NOT NULL,
+    "PrescriptionId" bigint NOT NULL,
+    "DrugProductId" bigint NOT NULL
+);
+
+
+ALTER TABLE public."PrescriptionByDrugProduct" OWNER TO postgres;
+
+--
+-- Name: PrescriptionByDrugProduct_Id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."PrescriptionByDrugProduct_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."PrescriptionByDrugProduct_Id_seq" OWNER TO postgres;
+
+--
+-- Name: PrescriptionByDrugProduct_Id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."PrescriptionByDrugProduct_Id_seq" OWNED BY public."PrescriptionByDrugProduct"."Id";
+
+
+--
+-- Name: Prescription_Id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public."Prescription_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Prescription_Id_seq" OWNER TO postgres;
+
+--
+-- Name: Prescription_Id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public."Prescription_Id_seq" OWNED BY public."Prescription"."Id";
+
+
+--
+-- Name: Role; Type: TABLE; Schema: users; Owner: postgres
+--
+
+CREATE TABLE users."Role" (
+    "Id" bigint NOT NULL,
+    "Name" text NOT NULL
+);
+
+
+ALTER TABLE users."Role" OWNER TO postgres;
+
+--
+-- Name: Role_Id_seq; Type: SEQUENCE; Schema: users; Owner: postgres
+--
+
+CREATE SEQUENCE users."Role_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE users."Role_Id_seq" OWNER TO postgres;
+
+--
+-- Name: Role_Id_seq; Type: SEQUENCE OWNED BY; Schema: users; Owner: postgres
+--
+
+ALTER SEQUENCE users."Role_Id_seq" OWNED BY users."Role"."Id";
+
+
+--
+-- Name: User; Type: TABLE; Schema: users; Owner: postgres
+--
+
+CREATE TABLE users."User" (
+    "Id" bigint NOT NULL,
+    "Email" text NOT NULL,
+    "Firstname" text NOT NULL,
+    "Lastname" text NOT NULL,
+    "Title" text,
+    "Gender" text,
+    "Password" text NOT NULL
+);
+
+
+ALTER TABLE users."User" OWNER TO postgres;
+
+--
+-- Name: UserByRole; Type: TABLE; Schema: users; Owner: postgres
+--
+
+CREATE TABLE users."UserByRole" (
+    "Id" bigint NOT NULL,
+    "RoleId" bigint NOT NULL,
+    "UserId" bigint NOT NULL
+);
+
+
+ALTER TABLE users."UserByRole" OWNER TO postgres;
+
+--
+-- Name: UserByRole_Id_seq; Type: SEQUENCE; Schema: users; Owner: postgres
+--
+
+CREATE SEQUENCE users."UserByRole_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE users."UserByRole_Id_seq" OWNER TO postgres;
+
+--
+-- Name: UserByRole_Id_seq; Type: SEQUENCE OWNED BY; Schema: users; Owner: postgres
+--
+
+ALTER SEQUENCE users."UserByRole_Id_seq" OWNED BY users."UserByRole"."Id";
+
+
+--
+-- Name: User_Id_seq; Type: SEQUENCE; Schema: users; Owner: postgres
+--
+
+CREATE SEQUENCE users."User_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE users."User_Id_seq" OWNER TO postgres;
+
+--
+-- Name: User_Id_seq; Type: SEQUENCE OWNED BY; Schema: users; Owner: postgres
+--
+
+ALTER SEQUENCE users."User_Id_seq" OWNED BY users."User"."Id";
+
+
+--
+-- Name: Drug Id; Type: DEFAULT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."Drug" ALTER COLUMN "Id" SET DEFAULT nextval('drugs."Drug_Id_seq"'::regclass);
+
+
+--
+-- Name: DrugByDrugInteraction Id; Type: DEFAULT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugByDrugInteraction" ALTER COLUMN "Id" SET DEFAULT nextval('drugs."DrugByDrugInteraction_Id_seq"'::regclass);
+
+
+--
+-- Name: DrugProduct Id; Type: DEFAULT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugProduct" ALTER COLUMN "Id" SET DEFAULT nextval('drugs."DrugProduct_Id_seq"'::regclass);
+
+
+--
+-- Name: Prescription Id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Prescription" ALTER COLUMN "Id" SET DEFAULT nextval('public."Prescription_Id_seq"'::regclass);
+
+
+--
+-- Name: PrescriptionByDrugProduct Id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PrescriptionByDrugProduct" ALTER COLUMN "Id" SET DEFAULT nextval('public."PrescriptionByDrugProduct_Id_seq"'::regclass);
+
+
+--
+-- Name: Role Id; Type: DEFAULT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."Role" ALTER COLUMN "Id" SET DEFAULT nextval('users."Role_Id_seq"'::regclass);
+
+
+--
+-- Name: User Id; Type: DEFAULT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."User" ALTER COLUMN "Id" SET DEFAULT nextval('users."User_Id_seq"'::regclass);
+
+
+--
+-- Name: UserByRole Id; Type: DEFAULT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."UserByRole" ALTER COLUMN "Id" SET DEFAULT nextval('users."UserByRole_Id_seq"'::regclass);
+
+
+--
+-- Name: Drug "drug"_pk; Type: CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."Drug"
+    ADD CONSTRAINT """drug""_pk" PRIMARY KEY ("Id");
+
+
+--
+-- Name: DrugByDrugInteraction drugbydruginteraction_pk; Type: CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugByDrugInteraction"
+    ADD CONSTRAINT drugbydruginteraction_pk PRIMARY KEY ("Id");
+
+
+--
+-- Name: DrugProduct drugproduct_pk; Type: CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugProduct"
+    ADD CONSTRAINT drugproduct_pk PRIMARY KEY ("Id");
+
+
+--
+-- Name: Prescription "prescription"_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Prescription"
+    ADD CONSTRAINT """prescription""_pk" PRIMARY KEY ("Id");
+
+
+--
+-- Name: PrescriptionByDrugProduct "prescriptionbydrugproduct"_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PrescriptionByDrugProduct"
+    ADD CONSTRAINT """prescriptionbydrugproduct""_pk" PRIMARY KEY ("Id");
+
+
+--
+-- Name: UserByRole "userbyrole"_pk; Type: CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."UserByRole"
+    ADD CONSTRAINT """userbyrole""_pk" PRIMARY KEY ("Id");
+
+
+--
+-- Name: UserByRole "userbyrole"_pk_2; Type: CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."UserByRole"
+    ADD CONSTRAINT """userbyrole""_pk_2" UNIQUE ("RoleId");
+
+
+--
+-- Name: Role role_pk; Type: CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."Role"
+    ADD CONSTRAINT role_pk PRIMARY KEY ("Id");
+
+
+--
+-- Name: User user_pk; Type: CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."User"
+    ADD CONSTRAINT user_pk PRIMARY KEY ("Id");
+
+
+--
+-- Name: "drug"_"id"_uindex; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE UNIQUE INDEX """drug""_""id""_uindex" ON drugs."Drug" USING btree ("Id");
+
+
+--
+-- Name: drug_drugbankid_uindex; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE UNIQUE INDEX drug_drugbankid_uindex ON drugs."Drug" USING btree ("DrugBankId");
+
+
+--
+-- Name: drugbydruginteraction_"id"_uindex; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "drugbydruginteraction_""id""_uindex" ON drugs."DrugByDrugInteraction" USING btree ("Id");
+
+
+--
+-- Name: drugbydruginteraction_firstdrugid_index; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE INDEX drugbydruginteraction_firstdrugid_index ON drugs."DrugByDrugInteraction" USING btree ("FirstDrugId");
+
+
+--
+-- Name: drugbydruginteraction_seconddrugid_index; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE INDEX drugbydruginteraction_seconddrugid_index ON drugs."DrugByDrugInteraction" USING btree ("SecondDrugId");
+
+
+--
+-- Name: drugproduct_"id"_uindex; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "drugproduct_""id""_uindex" ON drugs."DrugProduct" USING btree ("Id");
+
+
+--
+-- Name: drugproduct_drugid_index; Type: INDEX; Schema: drugs; Owner: postgres
+--
+
+CREATE INDEX drugproduct_drugid_index ON drugs."DrugProduct" USING btree ("DrugId");
+
+
+--
+-- Name: "prescription"_"id"_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX """prescription""_""id""_uindex" ON public."Prescription" USING btree ("Id");
+
+
+--
+-- Name: "prescriptionbydrugproduct"_"id"_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX """prescriptionbydrugproduct""_""id""_uindex" ON public."PrescriptionByDrugProduct" USING btree ("Id");
+
+
+--
+-- Name: "userbyrole"_"id"_uindex; Type: INDEX; Schema: users; Owner: postgres
+--
+
+CREATE UNIQUE INDEX """userbyrole""_""id""_uindex" ON users."UserByRole" USING btree ("Id");
+
+
+--
+-- Name: role_"id"_uindex; Type: INDEX; Schema: users; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "role_""id""_uindex" ON users."Role" USING btree ("Id");
+
+
+--
+-- Name: role_"name"_uindex; Type: INDEX; Schema: users; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "role_""name""_uindex" ON users."Role" USING btree ("Name");
+
+
+--
+-- Name: user_"email"_uindex; Type: INDEX; Schema: users; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "user_""email""_uindex" ON users."User" USING btree ("Email");
+
+
+--
+-- Name: user_"id"_uindex; Type: INDEX; Schema: users; Owner: postgres
+--
+
+CREATE UNIQUE INDEX "user_""id""_uindex" ON users."User" USING btree ("Id");
+
+
+--
+-- Name: DrugByDrugInteraction drugbydruginteraction_drug_id_fk; Type: FK CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugByDrugInteraction"
+    ADD CONSTRAINT drugbydruginteraction_drug_id_fk FOREIGN KEY ("FirstDrugId") REFERENCES drugs."Drug"("Id");
+
+
+--
+-- Name: DrugByDrugInteraction drugbydruginteraction_drug_id_fk_2; Type: FK CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugByDrugInteraction"
+    ADD CONSTRAINT drugbydruginteraction_drug_id_fk_2 FOREIGN KEY ("SecondDrugId") REFERENCES drugs."Drug"("Id");
+
+
+--
+-- Name: DrugProduct drugproduct_drug_id_fk; Type: FK CONSTRAINT; Schema: drugs; Owner: postgres
+--
+
+ALTER TABLE ONLY drugs."DrugProduct"
+    ADD CONSTRAINT drugproduct_drug_id_fk FOREIGN KEY ("DrugId") REFERENCES drugs."Drug"("Id");
+
+
+--
+-- Name: Prescription "prescription"_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Prescription"
+    ADD CONSTRAINT """prescription""_user_id_fk" FOREIGN KEY ("DoctorId") REFERENCES users."User"("Id");
+
+
+--
+-- Name: Prescription "prescription"_user_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Prescription"
+    ADD CONSTRAINT """prescription""_user_id_fk_2" FOREIGN KEY ("PatientId") REFERENCES users."User"("Id");
+
+
+--
+-- Name: PrescriptionByDrugProduct "prescriptionbydrugproduct"_drugproduct_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PrescriptionByDrugProduct"
+    ADD CONSTRAINT """prescriptionbydrugproduct""_drugproduct_id_fk" FOREIGN KEY ("DrugProductId") REFERENCES drugs."DrugProduct"("Id");
+
+
+--
+-- Name: PrescriptionByDrugProduct "prescriptionbydrugproduct"_prescription_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."PrescriptionByDrugProduct"
+    ADD CONSTRAINT """prescriptionbydrugproduct""_prescription_id_fk" FOREIGN KEY ("PrescriptionId") REFERENCES public."Prescription"("Id");
+
+
+--
+-- Name: UserByRole "userbyrole"_role_id_fk; Type: FK CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."UserByRole"
+    ADD CONSTRAINT """userbyrole""_role_id_fk" FOREIGN KEY ("RoleId") REFERENCES users."Role"("Id");
+
+
+--
+-- Name: UserByRole "userbyrole"_user_id_fk; Type: FK CONSTRAINT; Schema: users; Owner: postgres
+--
+
+ALTER TABLE ONLY users."UserByRole"
+    ADD CONSTRAINT """userbyrole""_user_id_fk" FOREIGN KEY ("UserId") REFERENCES users."User"("Id");
+
+
+--
+-- PostgreSQL database dump complete
+--
+
